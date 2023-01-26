@@ -48,9 +48,7 @@ uint32_t SX126xGetRandom(void) {
 #define REG_ANA_MIXER 0x08E5
 
 void fillRandom() {
-  // randomStock
-  // uint32_t number = 0;
-  uint8_t regAnaLna = 0, regAnaMixer = 0, cnt = 0;
+  uint8_t regAnaLna = 0, regAnaMixer = 0;
   regAnaLna = Radio.Read(REG_ANA_LNA);
   Radio.Write(REG_ANA_LNA, regAnaLna & ~(1 << 0));
   regAnaMixer = Radio.Read(REG_ANA_MIXER);
@@ -58,9 +56,8 @@ void fillRandom() {
   // Set radio in continuous reception
   Radio.Rx(0xFFFFFF);
   // SX126xSetRx(0xFFFFFF); // Rx Continuous
-  for (uint8_t i = 0; i < 64; i++) {
-    Radio.ReadBuffer(RANDOM_NUMBER_GENERATORBASEADDR, (uint8_t*)(randomStock + cnt), 4);
-    cnt += 4;
+  for (uint8_t i = 0; i < 64; i+=4) {
+    Radio.ReadBuffer(RANDOM_NUMBER_GENERATORBASEADDR, (uint8_t*)(randomStock + i), 4);
   }
   randomIndex = 0;
   Radio.Standby();
