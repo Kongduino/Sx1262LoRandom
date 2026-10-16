@@ -24,7 +24,8 @@ void setup() {
   //  RadioEvents.RxTimeout = OnRxTimeout;
   //  RadioEvents.RxError = OnRxError;
   //  RadioEvents.CadDone = OnCadDone;
-  // Initialize the Radio
+  // Load the RAK4630's radio pins, then initialize the Radio
+  lora_rak4630_init();
   Radio.Init(&RadioEvents);
   // Set Radio channel
   Radio.SetChannel(myFreq);
@@ -48,7 +49,7 @@ void setup() {
 }
 
 void loop() {
-  fillRandom();
-  hexDump(randomStock, 256);
+  if (fillRandom()) hexDump(randomStock, sizeof(randomStock));
+  else Serial.println("The random number register did not change: is the radio working?");
   delay(1000);
 }
