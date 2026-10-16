@@ -25,11 +25,13 @@
 static uint8_t randomStock[256];
 static uint8_t randomIndex = 0;
 
-// Fills buf with len random bytes. The radio is put in continuous receive for the duration,
+// Fills buf with len random bytes. (Not an overload of fillRandom(): LoRandom has a
+// fillRandom(buf, len) of its own, and both headers can be included together.)
+// The radio is put in continuous receive for the duration,
 // then back in the mode it was in: receive is resumed with Radio.Rx(0), which keeps the app's
 // receive configuration. Returns false if the register stops changing (the radio did not enter
 // receive); the rest of buf is then left as it was.
-static inline bool fillRandom(uint8_t *buf, size_t len) {
+static inline bool fillRandomBuffer(uint8_t *buf, size_t len) {
   RadioOperatingModes_t mode = SX126xGetOperatingMode();
   uint8_t regAnaLna = Radio.Read(REG_ANA_LNA);
   uint8_t regAnaMixer = Radio.Read(REG_ANA_MIXER);
@@ -71,7 +73,7 @@ static inline bool fillRandom(uint8_t *buf, size_t len) {
 // Fills all of randomStock and resets randomIndex.
 static inline bool fillRandom() {
   randomIndex = 0;
-  return fillRandom(randomStock, sizeof(randomStock));
+  return fillRandomBuffer(randomStock, sizeof(randomStock));
 }
 
 #ifndef KONGDUINO_HEXDUMP
